@@ -1,0 +1,43 @@
+{
+  "connection": "default",
+  "collectionName": "",
+  "info": {
+    "name": "server",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "unique": true,
+      "required": true
+    },
+    "pingurl": {
+      "type": "string",
+      "required": true
+    },
+    "lastPing": {
+      "type": "date"
+    },
+    "token": {
+      "type": "string",
+      "unique": true,
+      "required": true
+    },
+    "lastSocketPing": {
+      "type": "date"
+    },
+    "timeout": {
+      "type": "integer",
+      "default": "300",
+      "required": true
+    },
+    "interval": {
+      "type": "integer",
+      "required": true,
+      "default": "60"
+    }
+  }
+}
