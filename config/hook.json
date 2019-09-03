@@ -6,5 +6,10 @@
       "Define the hooks' load order by putting their names in this array in the right order"
     ],
     "after": []
+  },
+  "tgbot": {
+    "enabled": true,
+    "token": "",
+    "gid": ""
   }
 }
