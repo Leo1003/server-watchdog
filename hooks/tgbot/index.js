@@ -22,8 +22,8 @@ module.exports = strapi => {
             strapi.tgbot = new TGBot(strapi.config.hook.settings.tgbot['token'], { polling: false });
             cb();
         },
-        sendMessage: (msg) => {
-            strapi.tgbot.sendMessage(strapi.config.hook.settings.tgbot['gid'], msg);
+        sendMessage: async (msg) => {
+            await strapi.tgbot.sendMessage(strapi.config.hook.settings.tgbot['gid'], msg);
         }
     };
 

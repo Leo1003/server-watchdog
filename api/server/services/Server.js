@@ -20,5 +20,12 @@ module.exports = {
         } else {
             return query;
         }
+    },
+    async updateSocketPing(id) {
+        return strapi.models.server.updateOne({
+            _id: id
+        }, {
+            lastSocketPing: new Date()
+        });
     }
 };

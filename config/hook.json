@@ -11,5 +11,8 @@
     "enabled": true,
     "token": "",
     "gid": ""
+  },
+  "ping": {
+    "enabled": true
   }
 }
