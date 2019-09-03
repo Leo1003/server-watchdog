@@ -22,7 +22,7 @@
             "handler": "Server.create",
             "config": {
                 "policies": [
-                    "global.isAuthenticated"
+                    "plugins.users-permissions.isAuthenticated"
                 ]
             }
         },
@@ -32,7 +32,7 @@
             "handler": "Server.update",
             "config": {
                 "policies": [
-                    "global.isAuthenticated"
+                    "plugins.users-permissions.isAuthenticated"
                 ]
             }
         },
@@ -42,7 +42,7 @@
             "handler": "Server.delete",
             "config": {
                 "policies": [
-                    "global.isAuthenticated"
+                    "plugins.users-permissions.isAuthenticated"
                 ]
             }
         }
