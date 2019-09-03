@@ -2,8 +2,8 @@
 const _ = require('lodash');
 
 /**
-* Read the documentation () to implement custom service functions
-*/
+ * Read the documentation () to implement custom service functions
+ */
 
 module.exports = {
     filter(user, query) {

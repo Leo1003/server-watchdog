@@ -3,29 +3,29 @@ const _ = require('lodash');
 const TGBot = require('node-telegram-bot-api');
 
 module.exports = strapi => {
-  const hook = {
+    const hook = {
 
-    /**
-     * Default options
-     */
+        /**
+         * Default options
+         */
 
-    defaults: {
-      token: "",
-      gid: ""
-    },
+        defaults: {
+            token: "",
+            gid: ""
+        },
 
-    /**
-     * Initialize the hook
-     */
+        /**
+         * Initialize the hook
+         */
 
-    initialize: cb => {
-      strapi.tgbot = new TGBot(strapi.config.hook.settings.tgbot['token'], { polling: false });
-      cb();
-    },
-    sendMessage: (msg) => {
-      strapi.tgbot.sendMessage(strapi.config.hook.settings.tgbot['gid'], msg);
-    }
-  };
+        initialize: cb => {
+            strapi.tgbot = new TGBot(strapi.config.hook.settings.tgbot['token'], { polling: false });
+            cb();
+        },
+        sendMessage: (msg) => {
+            strapi.tgbot.sendMessage(strapi.config.hook.settings.tgbot['gid'], msg);
+        }
+    };
 
-  return hook;
+    return hook;
 };
