@@ -27,6 +27,16 @@
             }
         },
         {
+            "method": "POST",
+            "path": "/servers/:_id/token",
+            "handler": "Server.renewToken",
+            "config": {
+                "policies": [
+                    "plugins.users-permissions.isAuthenticated"
+                ]
+            }
+        },
+        {
             "method": "PUT",
             "path": "/servers/:_id",
             "handler": "Server.update",

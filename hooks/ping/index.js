@@ -15,12 +15,19 @@ module.exports = strapi => {
         initialize: cb => {
             let wss = new WebSocket.Server({ noServer: true });
             wss.on('connection', (ws, request, serverData) => {
+                ws.serverId = serverData._id;
+                strapi.serverStatus[serverData._id].ws = ws;
                 ws.ping();
                 ws.on('pong', () => {
                     strapi.log.trace(`Received pong from server: ${serverData.name}`);
-                    strapi.services.server.updateSocketPing(serverData._id).then(query => {
-                        strapi.log.trace(`Socket update completed.`);
+                    strapi.serverStatus[serverData._id].socketPong().then(() => {
+                        strapi.log.trace(`WebSocket pong completed.`);
                     });
+                });
+                ws.on('close', (code, reason) => {
+                    if (strapi.serverStatus[serverData._id]) {
+                        strapi.serverStatus[serverData._id].ws = undefined;
+                    }
                 });
             });
 

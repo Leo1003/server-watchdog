@@ -32,4 +32,39 @@ module.exports = {
         let query = await strapi.services.server.findOne(ctx.params);
         return strapi.services.server.filter(ctx.state.user, query);
     },
+
+    /**
+     * Create a record.
+     *
+     * @return {Promise}
+     */
+
+    async create(ctx) {
+        let data = _.pick(ctx.request.body, ['name', 'pingurl', 'timeout', 'interval']);
+        return strapi.services.server.create(data);
+    },
+
+    /**
+     * Update a record.
+     *
+     * @return {Promise}
+     */
+
+    async update(ctx) {
+        let data = _.pick(ctx.request.body, ['name', 'pingurl', 'timeout', 'interval']);
+        return strapi.services.product.update(ctx.params, data);
+    },
+
+    /**
+     * Renew a server's token.
+     *
+     * @return {Promise}
+     */
+
+    async renewToken(ctx) {
+        let data = {
+            token: strapi.services.server.generateToken()
+        }
+        return strapi.services.product.update(ctx.params, data);
+    },
 };

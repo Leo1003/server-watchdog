@@ -30,7 +30,10 @@ module.exports = {
 
     // Before creating a value.
     // Fired before an `insert` query.
-    // beforeCreate: async (model) => {},
+    beforeCreate: async (model) => {
+        // Generate token for newly created items
+        model.token = strapi.services.server.generateToken();
+    },
 
     // After creating a value.
     // Fired after an `insert` query.
