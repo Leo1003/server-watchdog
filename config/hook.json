@@ -12,7 +12,7 @@
     "token": "",
     "gid": ""
   },
-  "ping": {
+  "ws-pong": {
     "enabled": true
   }
 }
