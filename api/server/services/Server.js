@@ -2,6 +2,7 @@
 const _ = require('lodash');
 const randomstring = require('randomstring');
 const {ServerState, ServerStatus} = require('../../../serverStatus.js');
+const WebSocket = require('ws');
 
 /**
  * Read the documentation () to implement custom service functions
@@ -30,6 +31,11 @@ module.exports = {
         function _appendSingle(i) {
             if (i._id && strapi.serverStatus[i._id]) {
                 i.status = strapi.serverStatus[i._id].status;
+                if (strapi.serverStatus[i._id].ws) {
+                    i.wsStatus = strapi.serverStatus[i._id].ws.readyState;
+                } else {
+                    i.wsStatus = WebSocket.CLOSED;
+                }
             }
         }
 
