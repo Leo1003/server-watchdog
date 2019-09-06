@@ -10,7 +10,7 @@ const {ServerState, ServerStatus} = require('../../../serverStatus.js');
 module.exports = {
     filter(user, query) {
         function _filter(i) {
-            return _.pick(i, ['_id', 'name', 'lastPing', 'lastSocketPing']);
+            return _.pick(i, ['id', 'name', 'lastPing', 'lastSocketPing', 'status']);
         }
 
         if (!user) {
@@ -25,6 +25,19 @@ module.exports = {
     },
     generateToken() {
         return randomstring.generate();
+    },
+    appendStatus(item) {
+        function _appendSingle(i) {
+            if (i._id && strapi.serverStatus[i._id]) {
+                i.status = strapi.serverStatus[i._id].status;
+            }
+        }
+
+        if (_.isArray(item)) {
+            _.forEach(item, _appendSingle);
+        } else {
+            _appendSingle(item);
+        }
     },
     async updateSocketPing(id) {
         let now = new Date();
@@ -46,7 +59,7 @@ module.exports = {
     },
     async reloadServerStatus(cur) {
         let current = cur || {};
-        let servers = await strapi.models.server.find();
+        let servers = await strapi.query('Server').find();
         let newservers = {};
         _.forEach(servers, s => {
             if (current[s._id]) {
@@ -56,6 +69,7 @@ module.exports = {
                 newservers[s._id] = new ServerStatus(s);
             }
         });
+        strapi.log.debug(`Reloaded status.`);
         return newservers;
     }
 };

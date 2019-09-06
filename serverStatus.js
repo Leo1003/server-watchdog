@@ -3,8 +3,8 @@ const _ = require('lodash');
 const ServerState = {
     UNKNOWN: 0,
     ONLINE: 1,
-    DOWN: 2,
-    WARNING: 3,
+    WARNING: 2,
+    DOWN: 3,
 };
 
 class ServerStatus {
@@ -12,18 +12,21 @@ class ServerStatus {
         _.extend(this, _.pick(s, ['_id', 'name', 'pingurl', 'lastPing', 'lastSocketPing', 'timeout', 'interval']));
 
         this.ws = s.ws;
-        this.lastNotified = s.lastNotified;
+        //this.lastNotified = s.lastNotified;
         this.status = s.status || ServerState.UNKNOWN;
+        this.refreshStatus();
     }
 
     async urlPong() {
         let time = await strapi.services.server.updatePing(this._id);
         this.lastPing = time;
+        this.status = this._calStatus();
     }
 
     async socketPong() {
         let time = await strapi.services.server.updateSocketPing(this._id);
         this.lastSocketPing = time;
+        this.status = this._calStatus();
     }
 
     needUrlPing() {
@@ -41,12 +44,10 @@ class ServerStatus {
     }
 
     refreshStatus() {
-        if (this.status !== ServerState.UNKNOWN) {
-            if (!this.lastPing && !this.lastSocketPing) {
-                this.status = ServerState.UNKNOWN;
-            } else {
-                this.status = this._calStatus();
-            }
+        if (!this.lastPing && !this.lastSocketPing) {
+            this.status = ServerState.UNKNOWN;
+        } else {
+            this.status = this._calStatus();
         }
         return this.status;
     }
@@ -63,7 +64,7 @@ class ServerStatus {
     }
     _isSocketExpired() {
         let now = new Date();
-        if (this.ws && this.lastSocketPing) {
+        if (this.lastSocketPing) {
             return (now - this.lastSocketPing) > (this.timeout * 1000);
         }
         return false;

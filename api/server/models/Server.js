@@ -11,7 +11,10 @@ module.exports = {
 
     // After saving a value.
     // Fired after an `insert` or `update` query.
-    // afterSave: async (model, result) => {},
+    afterSave: async (model, result) => {
+        strapi.log.trace(`Saved!`);
+        strapi.serverStatus = await strapi.services.server.reloadServerStatus(strapi.serverStatus);
+    },
 
     // Before fetching all values.
     // Fired before a `fetchAll` operation.
@@ -53,5 +56,12 @@ module.exports = {
 
     // After destroying a value.
     // Fired after a `delete` query.
-    // afterDestroy: async (model, result) => {}
+    afterDestroy: async (model, result) => {
+        strapi.log.trace(`Destoried`);
+        if (result._id && strapi.serverStatus[result._id] && strapi.serverStatus[result._id].ws) {
+            strapi.log.info(`Closing websocket for ${result.name} due to server remove.`);
+            strapi.serverStatus[result._id].ws.close(1000, 'Server Remove');
+        }
+        strapi.serverStatus = await strapi.services.server.reloadServerStatus(strapi.serverStatus);
+    }
 };
