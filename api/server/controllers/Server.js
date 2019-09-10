@@ -31,6 +31,9 @@ module.exports = {
 
     async findOne(ctx) {
         let query = await strapi.services.server.findOne(ctx.params);
+        if (!query) {
+            return null;
+        }
         strapi.services.server.appendStatus(query);
         return strapi.services.server.filter(ctx.state.user, query);
     },
