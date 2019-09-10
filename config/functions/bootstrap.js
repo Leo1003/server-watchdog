@@ -13,6 +13,7 @@ const {ServerState, ServerStatus} = require('../../serverStatus.js');
 
 module.exports = async () => {
     axios.defaults.timeout = 1500;
+    let startTimestamp = new Date();
 
     let result = await strapi.services.server.reloadServerStatus();
     strapi.log.debug(`Bootstrap loaded status object.`);
@@ -38,11 +39,18 @@ module.exports = async () => {
                     s.ws.ping();
                 }
             }
-            let oldStatus = s.status;
+
             s.refreshStatus();
-            if (s.status === ServerState.DOWN && oldStatus !== ServerState.DOWN) {
+            // Start to notify after 15 seconds
+            let now = new Date();
+            if (s.needNotify && (now - startTimestamp > 15000)) {
                 strapi.log.warn(`Server '${s.name}' went down!`);
-                //TODO: Send notify
+                strapi.hook.tgbot.sendMessage(`!!!Server Watchdog Warning!!!\nServer '${s.name}' went down!\nPlease check your server's status.`).then(() => {
+                    s.setNotified();
+                    strapi.log.info(`Notify sent successfully.`);
+                }).catch(err => {
+                    strapi.log.error(`Error when sending notify: ${err}`);
+                });
             }
         });
     }, 2000);

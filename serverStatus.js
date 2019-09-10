@@ -7,12 +7,18 @@ const ServerState = {
     DOWN: 3,
 };
 
+const PingStatus = {
+    UNKNOWN: 0,
+    LIVING: 1,
+    EXPIRED: 2,
+}
+
 class ServerStatus {
     constructor(s) {
         _.extend(this, _.pick(s, ['id', 'name', 'pingurl', 'lastPing', 'lastSocketPing', 'timeout', 'interval']));
 
         this.ws = s.ws;
-        //this.lastNotified = s.lastNotified;
+        this.needNotify = s.needNotify || false;
         this.status = s.status || ServerState.UNKNOWN;
         this.refreshStatus();
     }
@@ -44,37 +50,72 @@ class ServerStatus {
     }
 
     refreshStatus() {
-        if (!this.lastPing && !this.lastSocketPing) {
-            this.status = ServerState.UNKNOWN;
-        } else {
-            this.status = this._calStatus();
+        let oldStatus = this.status;
+        this.status = this._calStatus();
+
+        if (this.status === ServerState.DOWN && oldStatus !== ServerState.DOWN) {
+            this.needNotify = true;
+        }
+        if (this.status !== ServerState.DOWN) {
+            this.needNotify = false;
         }
         return this.status;
     }
+
+    setNotified() {
+        this.needNotify = false;
+    }
+
     _calStatus() {
-        let wsexp = this._isSocketExpired();
-        let urlexp = this._isUrlExpired();
-        if (wsexp && urlexp) {
-            return ServerState.DOWN;
-        } else if (wsexp || urlexp) {
-            return ServerState.WARNING;
+        let wsexp = this._socketStatus();
+        let urlexp = this._urlStatus();
+        if (wsexp !== PingStatus.UNKNOWN && urlexp !== PingStatus.UNKNOWN) {
+            if (wsexp === PingStatus.LIVING && urlexp === PingStatus.LIVING) {
+                return ServerState.ONLINE;
+            } else if (wsexp === PingStatus.LIVING || urlexp === PingStatus.LIVING) {
+                return ServerState.WARNING;
+            } else {
+                return ServerState.DOWN;
+            }
+        } else if (wsexp !== PingStatus.UNKNOWN) {
+            if (wsexp === PingStatus.LIVING) {
+                return ServerState.ONLINE;
+            } else {
+                return ServerState.DOWN;
+            }
+        } else if (urlexp !== PingStatus.UNKNOWN) {
+            if (urlexp === PingStatus.LIVING) {
+                return ServerState.ONLINE;
+            } else {
+                return ServerState.DOWN;
+            }
         } else {
-            return ServerState.ONLINE;
+            return ServerState.UNKNOWN;
         }
     }
-    _isSocketExpired() {
+    _socketStatus() {
         let now = new Date();
         if (this.lastSocketPing) {
-            return (now - this.lastSocketPing) > (this.timeout * 1000);
+            if ((now - this.lastSocketPing) > (this.timeout * 1000)) {
+                return PingStatus.EXPIRED;
+            } else {
+                return PingStatus.LIVING;
+            }
+        } else {
+            return PingStatus.UNKNOWN;
         }
-        return false;
     }
-    _isUrlExpired() {
+    _urlStatus() {
         let now = new Date();
         if (this.lastPing) {
-            return (now - this.lastPing) > (this.timeout * 1000);
+            if ((now - this.lastPing) > (this.timeout * 1000)) {
+                return PingStatus.EXPIRED;
+            } else {
+                return PingStatus.LIVING;
+            }
+        } else {
+            return PingStatus.UNKNOWN;
         }
-        return false;
     }
 }
 
