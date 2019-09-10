@@ -9,8 +9,8 @@
   },
   "tgbot": {
     "enabled": true,
-    "token": "",
-    "gid": ""
+    "token": "${process.env.TELEGRAM_TOKEN}",
+    "chatid": "${process.env.TELEGRAM_CHATID}"
   },
   "ws-pong": {
     "enabled": true

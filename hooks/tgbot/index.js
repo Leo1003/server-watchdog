@@ -11,7 +11,7 @@ module.exports = strapi => {
 
         defaults: {
             token: "",
-            gid: ""
+            chatid: ""
         },
 
         /**
@@ -32,7 +32,7 @@ module.exports = strapi => {
         },
         sendMessage: async (msg) => {
             if (this.runtimeEnable) {
-                return await strapi.tgbot.sendMessage(strapi.config.hook.settings.tgbot['gid'], msg);
+                return await strapi.tgbot.sendMessage(strapi.config.hook.settings.tgbot['chatid'], msg);
             }
             return null;
         }
