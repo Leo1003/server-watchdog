@@ -12,21 +12,21 @@ module.exports = strapi => {
         /**
          * Initialize the hook
          */
-        initialize: cb => {
+        initialize() {
             let wss = new WebSocket.Server({ noServer: true });
             wss.on('connection', (ws, request, serverData) => {
-                ws.serverId = serverData._id;
-                strapi.serverStatus[serverData._id].ws = ws;
+                ws.serverId = serverData.id;
+                strapi.serverStatus[serverData.id].ws = ws;
                 ws.ping();
                 ws.on('pong', () => {
                     strapi.log.trace(`Received pong from server: ${serverData.name}`);
-                    strapi.serverStatus[serverData._id].socketPong().then(() => {
+                    strapi.serverStatus[serverData.id].socketPong().then(() => {
                         strapi.log.trace(`WebSocket pong completed.`);
                     });
                 });
                 ws.on('close', (code, reason) => {
-                    if (strapi.serverStatus[serverData._id]) {
-                        strapi.serverStatus[serverData._id].ws = undefined;
+                    if (strapi.serverStatus[serverData.id]) {
+                        strapi.serverStatus[serverData.id].ws = undefined;
                     }
                 });
             });
@@ -47,8 +47,6 @@ module.exports = strapi => {
                 });
             });
             strapi.wss = wss;
-
-            cb();
         },
         authenticate: async req => {
             strapi.log.trace(`Connect with header: ${req.headers.authorization}`);

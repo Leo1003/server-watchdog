@@ -13,6 +13,9 @@ module.exports = {
         function _filter(i) {
             return _.pick(i, ['id', 'name', 'lastPing', 'lastSocketPing', 'status']);
         }
+        function _filter_auth(i) {
+            return _.omit(i, ['_id', '__v']);
+        }
 
         if (!user) {
             if (Array.isArray(query)) {
@@ -21,7 +24,11 @@ module.exports = {
                 return _filter(query);
             }
         } else {
-            return query;
+            if (Array.isArray(query)) {
+                return _.map(query, _filter_auth);
+            } else {
+                return _filter_auth(query);
+            }
         }
     },
     generateToken() {
@@ -29,10 +36,10 @@ module.exports = {
     },
     appendStatus(item) {
         function _appendSingle(i) {
-            if (i._id && strapi.serverStatus[i._id]) {
-                i.status = strapi.serverStatus[i._id].status;
-                if (strapi.serverStatus[i._id].ws) {
-                    i.wsStatus = strapi.serverStatus[i._id].ws.readyState;
+            if (i.id && strapi.serverStatus[i.id]) {
+                i.status = strapi.serverStatus[i.id].status;
+                if (strapi.serverStatus[i.id].ws) {
+                    i.wsStatus = strapi.serverStatus[i.id].ws.readyState;
                 } else {
                     i.wsStatus = WebSocket.CLOSED;
                 }
@@ -68,11 +75,11 @@ module.exports = {
         let servers = await strapi.query('Server').find();
         let newservers = {};
         _.forEach(servers, s => {
-            if (current[s._id]) {
-                newservers[s._id] = new ServerStatus(current[s._id]);
-                _.extend(newservers[s._id], _.pick(s, ['name', 'pingurl', 'lastPing', 'lastSocketPing', 'timeout', 'interval']));
+            if (current[s.id]) {
+                newservers[s.id] = new ServerStatus(current[s.id]);
+                _.extend(newservers[s.id], _.pick(s, ['name', 'pingurl', 'lastPing', 'lastSocketPing', 'timeout', 'interval']));
             } else {
-                newservers[s._id] = new ServerStatus(s);
+                newservers[s.id] = new ServerStatus(s);
             }
         });
         strapi.log.debug(`Reloaded status.`);

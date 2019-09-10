@@ -1,4 +1,5 @@
 'use strict';
+const _ = require('lodash');
 
 /**
  * Lifecycle callbacks for the `Server` model.
@@ -58,10 +59,12 @@ module.exports = {
     // Fired after a `delete` query.
     afterDestroy: async (model, result) => {
         strapi.log.trace(`Destoried`);
-        if (result._id && strapi.serverStatus[result._id] && strapi.serverStatus[result._id].ws) {
-            strapi.log.info(`Closing websocket for ${result.name} due to server remove.`);
-            strapi.serverStatus[result._id].ws.close(1000, 'Server Remove');
+        if (!_.isNull(result)) {
+            if (result.id && strapi.serverStatus[result.id] && strapi.serverStatus[result.id].ws) {
+                strapi.log.info(`Closing websocket for ${result.name} due to server remove.`);
+                strapi.serverStatus[result.id].ws.close(1000, 'Server Remove');
+            }
+            strapi.serverStatus = await strapi.services.server.reloadServerStatus(strapi.serverStatus);
         }
-        strapi.serverStatus = await strapi.services.server.reloadServerStatus(strapi.serverStatus);
     }
 };

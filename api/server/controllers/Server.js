@@ -19,7 +19,6 @@ module.exports = {
         } else {
             query = await strapi.services.server.find(ctx.query);
         }
-        query = _.invokeMap(query, 'toObject');
         strapi.services.server.appendStatus(query);
         return strapi.services.server.filter(ctx.state.user, query);
     },
@@ -32,7 +31,6 @@ module.exports = {
 
     async findOne(ctx) {
         let query = await strapi.services.server.findOne(ctx.params);
-        query = query.toObject();
         strapi.services.server.appendStatus(query);
         return strapi.services.server.filter(ctx.state.user, query);
     },
@@ -72,9 +70,9 @@ module.exports = {
             token: strapi.services.server.generateToken()
         }
         let result = await strapi.services.server.update(ctx.params, data);
-        if (result._id && strapi.serverStatus[result._id] && strapi.serverStatus[result._id].ws) {
+        if (result.id && strapi.serverStatus[result.id] && strapi.serverStatus[result.id].ws) {
             strapi.log.info(`Closing websocket for ${result.name} due to token reset.`);
-            strapi.serverStatus[result._id].ws.close(1012, 'Token Reset');
+            strapi.serverStatus[result.id].ws.close(1012, 'Token Reset');
         }
         return result;
     },

@@ -9,7 +9,7 @@ const ServerState = {
 
 class ServerStatus {
     constructor(s) {
-        _.extend(this, _.pick(s, ['_id', 'name', 'pingurl', 'lastPing', 'lastSocketPing', 'timeout', 'interval']));
+        _.extend(this, _.pick(s, ['id', 'name', 'pingurl', 'lastPing', 'lastSocketPing', 'timeout', 'interval']));
 
         this.ws = s.ws;
         //this.lastNotified = s.lastNotified;
@@ -18,13 +18,13 @@ class ServerStatus {
     }
 
     async urlPong() {
-        let time = await strapi.services.server.updatePing(this._id);
+        let time = await strapi.services.server.updatePing(this.id);
         this.lastPing = time;
         this.status = this._calStatus();
     }
 
     async socketPong() {
-        let time = await strapi.services.server.updateSocketPing(this._id);
+        let time = await strapi.services.server.updateSocketPing(this.id);
         this.lastSocketPing = time;
         this.status = this._calStatus();
     }
