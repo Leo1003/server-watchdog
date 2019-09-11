@@ -55,6 +55,16 @@
                     "plugins.users-permissions.isAuthenticated"
                 ]
             }
+        },
+        {
+            "method": "POST",
+            "path": "/bottest",
+            "handler": "Server.bottest",
+            "config": {
+                "policies": [
+                    "plugins.users-permissions.isAuthenticated"
+                ]
+            }
         }
     ]
 }

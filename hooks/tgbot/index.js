@@ -27,7 +27,7 @@ module.exports = strapi => {
                 this.runtimeEnable = true;
             }).catch(err => {
                 strapi.log.warn(`Failed to initialize the telegram bot`);
-                strapi.log.warn(`Notify disabled!`);
+                strapi.log.warn(`Notification disabled!`);
             });
         },
         sendMessage: async (msg) => {

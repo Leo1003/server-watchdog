@@ -45,9 +45,11 @@ module.exports = async () => {
             let now = new Date();
             if (s.needNotify && (now - startTimestamp > 15000)) {
                 strapi.log.warn(`Server '${s.name}' went down!`);
-                strapi.hook.tgbot.sendMessage(`!!!Server Watchdog Warning!!!\nServer '${s.name}' went down!\nPlease check your server's status.`).then(() => {
+                strapi.hook.tgbot.sendMessage(`!!!Server Watchdog Warning!!!\nServer '${s.name}' went down!\nPlease check your server's status.`).then(result => {
                     s.setNotified();
-                    strapi.log.info(`Notify sent successfully.`);
+                    if (!_.isNull(result)) {
+                        strapi.log.info(`Notify sent successfully.`);
+                    }
                 }).catch(err => {
                     strapi.log.error(`Error when sending notify: ${err}`);
                 });

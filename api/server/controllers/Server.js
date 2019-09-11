@@ -79,4 +79,19 @@ module.exports = {
         }
         return result;
     },
+
+    async bottest(ctx) {
+        try {
+            if (strapi.hook.tgbot.runtimeEnable) {
+                let result = await strapi.hook.tgbot.sendMessage(`---Server Watchdog Testing---\nThis is a test message to test if you can receive notification from this bot.`);
+                strapi.log.info(`Test notification sent successfully.`);
+                return result;
+            } else {
+                ctx.response.forbidden('Notification disabled!');
+            }
+        } catch (err) {
+            ctx.response.internal('Test notification failed', err);
+            strapi.log.error(`Error when sending test notification: ${err}`);
+        }
+    },
 };
