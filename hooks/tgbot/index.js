@@ -19,19 +19,22 @@ module.exports = strapi => {
          */
 
         initialize() {
-            this.runtimeEnable = false;
+            strapi.hook.tgbot.runtimeEnable = false;
             strapi.tgbot = new TGBot(strapi.config.hook.settings.tgbot['token'], { polling: false });
             strapi.tgbot.getMe().then(info => {
                 strapi.log.info(`Telegram bot initialization successfully!`);
                 strapi.log.debug(`${JSON.stringify(info)}`);
-                this.runtimeEnable = true;
+                strapi.hook.tgbot.runtimeEnable = true;
             }).catch(err => {
                 strapi.log.warn(`Failed to initialize the telegram bot`);
                 strapi.log.warn(`Notification disabled!`);
             });
         },
+        isEnable() {
+            return strapi.hook.tgbot.runtimeEnable;
+        },
         sendMessage: async (msg) => {
-            if (this.runtimeEnable) {
+            if (strapi.hook.tgbot.runtimeEnable) {
                 return await strapi.tgbot.sendMessage(strapi.config.hook.settings.tgbot['chatid'], msg);
             }
             return null;

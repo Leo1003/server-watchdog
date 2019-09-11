@@ -82,7 +82,7 @@ module.exports = {
 
     async bottest(ctx) {
         try {
-            if (strapi.hook.tgbot.runtimeEnable) {
+            if (strapi.hook.tgbot.isEnable()) {
                 let result = await strapi.hook.tgbot.sendMessage(`---Server Watchdog Testing---\nThis is a test message to test if you can receive notification from this bot.`);
                 strapi.log.info(`Test notification sent successfully.`);
                 return result;
