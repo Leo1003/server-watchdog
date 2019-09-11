@@ -2,6 +2,7 @@
 const _ = require('lodash');
 const axios = require('axios');
 const {ServerState, ServerStatus} = require('../../serverStatus.js');
+require('newrelic');
 
 /**
  * An asynchronous bootstrap function that runs before
