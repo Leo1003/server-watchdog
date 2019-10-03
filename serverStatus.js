@@ -13,6 +13,20 @@ const PingStatus = {
     EXPIRED: 2,
 }
 
+function stateToString(state) {
+    switch (state) {
+        case ServerState.DOWN:
+            return "Down";
+        case ServerState.WARNING:
+            return "Warning";
+        case ServerState.ONLINE:
+            return "Online";
+        default:
+            return "Unknown";
+    }
+}
+
+
 class ServerStatus {
     constructor(s) {
         _.extend(this, _.pick(s, ['id', 'name', 'pingurl', 'lastPing', 'lastSocketPing', 'timeout', 'interval']));
@@ -64,6 +78,10 @@ class ServerStatus {
 
     setNotified() {
         this.needNotify = false;
+    }
+
+    printState() {
+        return `${this.name}: ${stateToString(this.status)}\n`;
     }
 
     _calStatus() {
