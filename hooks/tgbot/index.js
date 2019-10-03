@@ -33,15 +33,16 @@ module.exports = strapi => {
                 strapi.log.warn(`Notification disabled!`);
             });
 
-            strapi.tgbot.onText(/\/status(\s.+)?/, (msg, match) => {
+            strapi.tgbot.onText(/^\/status(?:\@\S+)?(?: +(\S+))?$/, (msg, match) => {
                 let name = match[1];
                 let response = "";
-                if (name == null) {
-                    response += `There are ${strapi.serverStatus.length}:\n`;
+                if (!name) {
+                    response += `There are ${_.size(strapi.serverStatus)} servers:\n`;
                     _.forEach(strapi.serverStatus, s => {
                         response += s.printState();
                     });
                 } else {
+                    name = name.trim();
                     let s = _.find(strapi.serverStatus, s => {
                         return s.name == name;
                     });
