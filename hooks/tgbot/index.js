@@ -36,12 +36,12 @@ module.exports = strapi => {
 
             // The status command
             strapi.tgbot.onText(/^\/status(?:\@\S+)?(?: +(\S+))?$/, (msg, match) => {
-                strapi.tgbot.sendCmdReply(strapi.tgbot.tgCmd_status(match[1]), 'status');
+                strapi.tgbot.sendCmdReply(msg.chat.id, strapi.tgbot.tgCmd_status(match[1]), 'status');
             });
 
             // The version command
             strapi.tgbot.onText(/^\/version(?:\@\S+)?$/, (msg, match) => {
-                strapi.tgbot.sendCmdReply(strapi.tgbot.tgCmd_version(), 'version');
+                strapi.tgbot.sendCmdReply(msg.chat.id, strapi.tgbot.tgCmd_version(), 'version');
             });
         },
         isEnable() {
@@ -53,8 +53,8 @@ module.exports = strapi => {
             }
             return null;
         },
-        sendCmdReply(msg, commandName) {
-            strapi.tgbot.sendMessage(msg.chat.id, response).then(res => {
+        sendCmdReply(id, msg, commandName) {
+            strapi.tgbot.sendMessage(id, msg).then(res => {
                 strapi.log.debug(`/${commandName} command success.`);
             }).catch(err => {
                 strapi.log.error(`Error occurred when sending response of /${commandName}`);
