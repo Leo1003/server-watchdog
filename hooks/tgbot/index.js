@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('lodash');
 const TGBot = require('node-telegram-bot-api');
+const pjson = require('../../package.json');
 
 module.exports = strapi => {
     const hook = {
@@ -33,30 +34,14 @@ module.exports = strapi => {
                 strapi.log.warn(`Notification disabled!`);
             });
 
+            // The status command
             strapi.tgbot.onText(/^\/status(?:\@\S+)?(?: +(\S+))?$/, (msg, match) => {
-                let name = match[1];
-                let response = "";
-                if (!name) {
-                    response += `There are ${_.size(strapi.serverStatus)} servers:\n`;
-                    _.forEach(strapi.serverStatus, s => {
-                        response += s.printState();
-                    });
-                } else {
-                    name = name.trim();
-                    let s = _.find(strapi.serverStatus, s => {
-                        return s.name == name;
-                    });
-                    if (s) {
-                        response = s.printState();
-                    } else {
-                        response = `Server "${name}" not found!`;
-                    }
-                }
-                strapi.tgbot.sendMessage(msg.chat.id, response).then(res => {
-                    strapi.log.debug('/status command success.');
-                }).catch(err => {
-                    strapi.log.error(`${JSON.stringify(err)}`);
-                })
+                strapi.tgbot.sendCmdReply(strapi.tgbot.tgCmd_status(match[1]), 'status');
+            });
+
+            // The version command
+            strapi.tgbot.onText(/^\/version(?:\@\S+)?$/, (msg, match) => {
+                strapi.tgbot.sendCmdReply(strapi.tgbot.tgCmd_version(), 'version');
             });
         },
         isEnable() {
@@ -67,6 +52,38 @@ module.exports = strapi => {
                 return await strapi.tgbot.sendMessage(strapi.config.hook.settings.tgbot['chatid'], msg);
             }
             return null;
+        },
+        sendCmdReply(msg, commandName) {
+            strapi.tgbot.sendMessage(msg.chat.id, response).then(res => {
+                strapi.log.debug(`/${commandName} command success.`);
+            }).catch(err => {
+                strapi.log.error(`Error occurred when sending response of /${commandName}`);
+                strapi.log.error(`${JSON.stringify(err)}`);
+            })
+        },
+        tgCmd_status(name) {
+            let response = "";
+            if (!name) {
+                response += `There are ${_.size(strapi.serverStatus)} servers:\n`;
+                _.forEach(strapi.serverStatus, s => {
+                    response += s.printState();
+                });
+            } else {
+                name = name.trim();
+                let s = _.find(strapi.serverStatus, s => {
+                    return s.name == name;
+                });
+                if (s) {
+                    response = s.printState();
+                } else {
+                    response = `Server "${name}" not found!`;
+                }
+            }
+            return response;
+        },
+        tgCmd_version() {
+            return `Current Bot Version: ${pjson.version}\n` +
+            `Node JS Version: ${process.version}`;
         }
     };
 
