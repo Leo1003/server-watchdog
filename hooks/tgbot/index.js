@@ -30,18 +30,18 @@ module.exports = strapi => {
             }).then(res => {
                 strapi.log.debug(`Polling enabled!`);
             }).catch(err => {
-                strapi.log.warn(`Failed to initialize the telegram bot`);
+                strapi.log.warn(`Failed to initialize the telegram bot: ${err}`);
                 strapi.log.warn(`Notification disabled!`);
             });
 
             // The status command
             strapi.tgbot.onText(/^\/status(?:\@\S+)?(?: +(\S+))?$/, (msg, match) => {
-                strapi.tgbot.sendCmdReply(msg.chat.id, strapi.tgbot.tgCmd_status(match[1]), 'status');
+                strapi.hook.tgbot.sendCmdReply(msg.chat.id, strapi.hook.tgbot.tgCmd_status(match[1]), 'status');
             });
 
             // The version command
             strapi.tgbot.onText(/^\/version(?:\@\S+)?$/, (msg, match) => {
-                strapi.tgbot.sendCmdReply(msg.chat.id, strapi.tgbot.tgCmd_version(), 'version');
+                strapi.hook.tgbot.sendCmdReply(msg.chat.id, strapi.hook.tgbot.tgCmd_version(), 'version');
             });
         },
         isEnable() {
