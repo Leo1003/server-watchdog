@@ -27,8 +27,8 @@ module.exports = async () => {
                     });
                 }).catch(err => {
                     if (err.response) {
-                        strapi.log.warn(`Pinging '${err.request.url}' with returned status code: ${error.response.status}`);
-                        s.urlPong.then(() => {
+                        strapi.log.warn(`Pinging '${err.request.url}' with returned status code: ${err.response.status}`);
+                        s.urlPong().then(() => {
                             strapi.log.trace(`URL pong completed.`);
                         });
                     }
