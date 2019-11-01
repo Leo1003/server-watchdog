@@ -44,15 +44,41 @@ module.exports = async () => {
             // Start to notify after 15 seconds
             let now = new Date();
             if (s.needNotify && (now - startTimestamp > 15000)) {
-                strapi.log.warn(`Server '${s.name}' went down!`);
-                strapi.hook.tgbot.sendMessage(`!!!Server Watchdog Warning!!!\nServer '${s.name}' went down!\nPlease check your server's status.`).then(result => {
+                if (s.status === ServerState.DOWN) {
+                    strapi.log.warn(`Server '${s.name}' went down!`);
+                    strapi.hook.tgbot.sendMessage(`!!!Server Watchdog Warning!!!\nServer '${s.name}' went down!\nPlease check your server's status.`).then(result => {
+                        s.setNotified();
+                        if (!_.isNull(result)) {
+                            strapi.log.info(`Notify sent successfully.`);
+                        }
+                    }).catch(err => {
+                        strapi.log.error(`Error when sending notify: ${err}`);
+                    });
+                } else if (s.status === ServerState.ONLINE) {
+                    strapi.log.info(`Server '${s.name}' recovered!`);
+                    strapi.hook.tgbot.sendMessage(`---Server Watchdog Notifiy---\nServer '${s.name}' is up!`).then(result => {
+                        s.setNotified();
+                        if (!_.isNull(result)) {
+                            strapi.log.info(`Notify sent successfully.`);
+                        }
+                    }).catch(err => {
+                        strapi.log.error(`Error when sending notify: ${err}`);
+                    });
+                } else if (s.status === ServerState.WARNING) {
+                    strapi.log.info(`Server '${s.name}' recovered but one of the ping method is failed!`);
+                    strapi.hook.tgbot.sendMessage(`---Server Watchdog Notifiy---\nServer '${s.name}' is up!\nBut one of the ping method(URL/WebSocket) is failed!`).then(result => {
+                        s.setNotified();
+                        if (!_.isNull(result)) {
+                            strapi.log.info(`Notify sent successfully.`);
+                        }
+                    }).catch(err => {
+                        strapi.log.error(`Error when sending notify: ${err}`);
+                    });
+                } else {
+                    strapi.log.error(`Unknown state ${s.printState()}!`);
+                    strapi.log.error(`Cannot send notify...`);
                     s.setNotified();
-                    if (!_.isNull(result)) {
-                        strapi.log.info(`Notify sent successfully.`);
-                    }
-                }).catch(err => {
-                    strapi.log.error(`Error when sending notify: ${err}`);
-                });
+                }
             }
         });
     }, 2000);

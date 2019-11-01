@@ -67,10 +67,10 @@ class ServerStatus {
         let oldStatus = this.status;
         this.status = this._calStatus();
 
-        if (this.status === ServerState.DOWN && oldStatus !== ServerState.DOWN) {
+        if (oldStatus !== ServerState.UNKNOWN && this.status !== oldStatus) {
             this.needNotify = true;
         }
-        if (this.status !== ServerState.DOWN) {
+        if (this.status === ServerState.UNKNOWN) {
             this.needNotify = false;
         }
         return this.status;
