@@ -11,18 +11,18 @@ const PingStatus = {
     UNKNOWN: 0,
     LIVING: 1,
     EXPIRED: 2,
-}
+};
 
 function stateToString(state) {
     switch (state) {
         case ServerState.DOWN:
-            return "Down";
+            return 'Down';
         case ServerState.WARNING:
-            return "Warning";
+            return 'Warning';
         case ServerState.ONLINE:
-            return "Online";
+            return 'Online';
         default:
-            return "Unknown";
+            return 'Unknown';
     }
 }
 

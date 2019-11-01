@@ -11,8 +11,8 @@ module.exports = strapi => {
          */
 
         defaults: {
-            token: "",
-            chatid: ""
+            token: '',
+            chatid: ''
         },
 
         /**
@@ -23,24 +23,24 @@ module.exports = strapi => {
             strapi.hook.tgbot.runtimeEnable = false;
             strapi.tgbot = new TGBot(strapi.config.hook.settings.tgbot['token'], { polling: false });
             strapi.tgbot.getMe().then(info => {
-                strapi.log.info(`Telegram bot initialization successfully!`);
+                strapi.log.info('Telegram bot initialization successfully!');
                 strapi.log.debug(`${JSON.stringify(info)}`);
                 strapi.hook.tgbot.runtimeEnable = true;
                 return strapi.tgbot.startPolling();
             }).then(res => {
-                strapi.log.debug(`Polling enabled!`);
+                strapi.log.debug('Polling enabled!');
             }).catch(err => {
                 strapi.log.warn(`Failed to initialize the telegram bot: ${err}`);
-                strapi.log.warn(`Notification disabled!`);
+                strapi.log.warn('Notification disabled!');
             });
 
             // The status command
-            strapi.tgbot.onText(/^\/status(?:\@\S+)?(?: +(\S+))?$/, (msg, match) => {
+            strapi.tgbot.onText(/^\/status(?:@\S+)?(?: +(\S+))?$/, (msg, match) => {
                 strapi.hook.tgbot.sendCmdReply(msg.chat.id, strapi.hook.tgbot.tgCmd_status(match[1]), 'status');
             });
 
             // The version command
-            strapi.tgbot.onText(/^\/version(?:\@\S+)?$/, (msg, match) => {
+            strapi.tgbot.onText(/^\/version(?:@\S+)?$/, (msg, match) => {
                 strapi.hook.tgbot.sendCmdReply(msg.chat.id, strapi.hook.tgbot.tgCmd_version(), 'version');
             });
         },
@@ -59,10 +59,10 @@ module.exports = strapi => {
             }).catch(err => {
                 strapi.log.error(`Error occurred when sending response of /${commandName}`);
                 strapi.log.error(`${JSON.stringify(err)}`);
-            })
+            });
         },
         tgCmd_status(name) {
-            let response = "";
+            let response = '';
             if (!name) {
                 response += `There are ${_.size(strapi.serverStatus)} servers:\n`;
                 _.forEach(strapi.serverStatus, s => {

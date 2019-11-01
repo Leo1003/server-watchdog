@@ -21,7 +21,7 @@ module.exports = strapi => {
                 ws.on('pong', () => {
                     strapi.log.trace(`Received pong from server: ${serverData.name}`);
                     strapi.serverStatus[serverData.id].socketPong().then(() => {
-                        strapi.log.trace(`WebSocket pong completed.`);
+                        strapi.log.trace('WebSocket pong completed.');
                     });
                 });
                 ws.on('close', (code, reason) => {

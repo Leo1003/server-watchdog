@@ -82,7 +82,7 @@ module.exports = {
                 newservers[s.id] = new ServerStatus(s);
             }
         });
-        strapi.log.debug(`Reloaded status.`);
+        strapi.log.debug('Reloaded status.');
         return newservers;
     }
 };

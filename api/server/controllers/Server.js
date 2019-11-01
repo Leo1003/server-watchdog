@@ -71,7 +71,7 @@ module.exports = {
     async renewToken(ctx) {
         let data = {
             token: strapi.services.server.generateToken()
-        }
+        };
         let result = await strapi.services.server.update(ctx.params, data);
         if (result.id && strapi.serverStatus[result.id] && strapi.serverStatus[result.id].ws) {
             strapi.log.info(`Closing websocket for ${result.name} due to token reset.`);
@@ -83,8 +83,8 @@ module.exports = {
     async bottest(ctx) {
         try {
             if (strapi.hook.tgbot.isEnable()) {
-                let result = await strapi.hook.tgbot.sendMessage(`---Server Watchdog Testing---\nThis is a test message to test if you can receive notification from this bot.`);
-                strapi.log.info(`Test notification sent successfully.`);
+                let result = await strapi.hook.tgbot.sendMessage('---Server Watchdog Testing---\nThis is a test message to test if you can receive notification from this bot.');
+                strapi.log.info('Test notification sent successfully.');
                 return result;
             } else {
                 ctx.response.forbidden('Notification disabled!');

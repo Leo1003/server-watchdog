@@ -13,7 +13,7 @@ module.exports = {
     // After saving a value.
     // Fired after an `insert` or `update` query.
     afterSave: async (model, result) => {
-        strapi.log.trace(`Saved!`);
+        strapi.log.trace('Saved!');
         strapi.serverStatus = await strapi.services.server.reloadServerStatus(strapi.serverStatus);
     },
 
@@ -58,7 +58,7 @@ module.exports = {
     // After destroying a value.
     // Fired after a `delete` query.
     afterDestroy: async (model, result) => {
-        strapi.log.trace(`Destoried`);
+        strapi.log.trace('Destoried');
         if (!_.isNull(result)) {
             if (result.id && strapi.serverStatus[result.id] && strapi.serverStatus[result.id].ws) {
                 strapi.log.info(`Closing websocket for ${result.name} due to server remove.`);

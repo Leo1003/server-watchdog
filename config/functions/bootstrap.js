@@ -16,20 +16,20 @@ module.exports = async () => {
     let startTimestamp = new Date();
 
     let result = await strapi.services.server.reloadServerStatus();
-    strapi.log.debug(`Bootstrap loaded status object.`);
+    strapi.log.debug('Bootstrap loaded status object.');
     strapi.serverStatus = result;
     setInterval(() => {
         _.forEach(strapi.serverStatus, (s, id) => {
             if (s.needUrlPing()) {
                 axios.get(s.pingurl).then(response => {
                     s.urlPong().then(() => {
-                        strapi.log.trace(`URL pong completed.`);
+                        strapi.log.trace('URL pong completed.');
                     });
                 }).catch(err => {
                     if (err.response) {
                         strapi.log.warn(`Pinging '${err.request.url}' with returned status code: ${err.response.status}`);
                         s.urlPong().then(() => {
-                            strapi.log.trace(`URL pong completed.`);
+                            strapi.log.trace('URL pong completed.');
                         });
                     }
                 });
@@ -49,7 +49,7 @@ module.exports = async () => {
                     strapi.hook.tgbot.sendMessage(`!!!Server Watchdog Warning!!!\nServer '${s.name}' went down!\nPlease check your server's status.`).then(result => {
                         s.setNotified();
                         if (!_.isNull(result)) {
-                            strapi.log.info(`Notify sent successfully.`);
+                            strapi.log.info('Notify sent successfully.');
                         }
                     }).catch(err => {
                         strapi.log.error(`Error when sending notify: ${err}`);
@@ -59,7 +59,7 @@ module.exports = async () => {
                     strapi.hook.tgbot.sendMessage(`---Server Watchdog Notifiy---\nServer '${s.name}' is up!`).then(result => {
                         s.setNotified();
                         if (!_.isNull(result)) {
-                            strapi.log.info(`Notify sent successfully.`);
+                            strapi.log.info('Notify sent successfully.');
                         }
                     }).catch(err => {
                         strapi.log.error(`Error when sending notify: ${err}`);
@@ -69,14 +69,14 @@ module.exports = async () => {
                     strapi.hook.tgbot.sendMessage(`---Server Watchdog Notifiy---\nServer '${s.name}' is up!\nBut one of the ping method(URL/WebSocket) is failed!`).then(result => {
                         s.setNotified();
                         if (!_.isNull(result)) {
-                            strapi.log.info(`Notify sent successfully.`);
+                            strapi.log.info('Notify sent successfully.');
                         }
                     }).catch(err => {
                         strapi.log.error(`Error when sending notify: ${err}`);
                     });
                 } else {
                     strapi.log.error(`Unknown state ${s.printState()}!`);
-                    strapi.log.error(`Cannot send notify...`);
+                    strapi.log.error('Cannot send notify...');
                     s.setNotified();
                 }
             }
